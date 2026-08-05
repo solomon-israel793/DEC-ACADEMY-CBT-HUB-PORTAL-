@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dec Academic CBT Hub</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="logo1.png">
+    <!-- ✅ KATEX FOR MATH FORMULAS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
+</head>
+<body>
+
+<!-- 📝 EXAM INTERFACE -->
+<div class="exam-course-header">
+    <h4 id="examCourseName">📚 EXAMINATION</h4>
+</div>
+
+<header class="exam-header">
+    <div class="exam-user">
+        <img id="examPic" src="" alt="Profile">
+        <div>
+            <h4 id="examFirstname"></h4>
+            <small id="examMatric"></small>
+        </div>
+    </div>
+    <div class="timer-box" id="timer">00:00</div>
+    <button class="calc-toggle" onclick="toggleCalc()">🧮 Calculator</button>
+</header>
+
+<main class="exam-container">
+    <div class="question-card">
+        <div id="questionBox"></div>
+        <div id="instantFeedback" class="feedback-box" style="display:none;"></div>
+    </div>
+
+    <!-- NAVIGATION BUTTONS -->
+    <div class="nav-buttons">
+        <button id="prevBtn" onclick="prevQ()" disabled>← Previous</button>
+        <button id="nextBtn" onclick="nextQ()">Next ➡️</button>
+    </div>
+    
+    <!-- QUESTION NAVIGATION -->
+    <div class="q-nav" id="qNav"></div>
+
+    <button class="submit-btn" onclick="confirmSubmit()">✅ Submit Exam</button>
+</main>
+
+<!-- 🧮 ON-SCREEN CALCULATOR -->
+<div id="calcPanel" class="calc-panel">
+    <h3 style="text-align:center;margin-bottom:1rem;">Calculator</h3>
+    <input type="text" id="calcDisplay" readonly placeholder="0">
+    <div class="calc-grid">
+        <button onclick="calcInput('7')">7</button>
+        <button onclick="calcInput('8')">8</button>
+        <button onclick="calcInput('9')">9</button>
+        <button onclick="calcInput('/')">/</button>
+        <button onclick="calcClear()">C</button>
+
+        <button onclick="calcInput('4')">4</button>
+        <button onclick="calcInput('5')">5</button>
+        <button onclick="calcInput('6')">6</button>
+        <button onclick="calcInput('*')">×</button>
+        <button onclick="calcBack()">⌫</button>
+
+        <button onclick="calcInput('1')">1</button>
+        <button onclick="calcInput('2')">2</button>
+        <button onclick="calcInput('3')">3</button>
+        <button onclick="calcInput('-')">−</button>
+        <button onclick="calcInput('(')">(</button>
+
+        <button onclick="calcInput('0')">0</button>
+        <button onclick="calcInput('.')">.</button>
+        <button onclick="calcInput('pi')">π</button>
+        <button onclick="calcInput('+')">+</button>
+        <button onclick="calcInput(')')">)</button>
+
+        <button onclick="calcInput('sqrt(')">√</button>
+        <button onclick="calcInput('sin(')">sin</button>
+        <button onclick="calcInput('cos(')">cos</button>
+        <button onclick="calcInput('tan(')">tan</button>
+        <button onclick="calcEquals()">=</button>
+    </div>
+</div>
+
+<script src="exam.js"></script>
+</body>
+</html>
