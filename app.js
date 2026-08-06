@@ -14,6 +14,19 @@ let selectedExamCourse = null;
 let selectedExamMode = null;
 let selectedTopics = [];
 
+// --- ✅ KATEX RENDER HELPER ---
+function renderMath() {
+    if (window.renderMathInElement) {
+        renderMathInElement(document.body, {
+            delimiters: [
+                {left: '\\(', right: '\\)', display: false},
+                {left: '\\[', right: '\\]', display: true}
+            ],
+            throwOnError: false
+        });
+    }
+}
+
 // --- STORAGE & UTILITY FUNCTIONS ---
 function safeSave(key, valueObj) {
     try { localStorage.setItem(key, JSON.stringify(valueObj)); return true; }
@@ -201,6 +214,7 @@ function loadDashboard(){
     document.getElementById("greeting").textContent=(h<12?"GOOD MORNING":h<17?"GOOD AFTERNOON":"GOOD EVENING")+", "+currentUser.firstname+" 🧠";
     
     updateCourseLists(); renderSubjects(); updateStats(); renderHistory(); drawChart();
+    renderMath(); // ✅ Render any math on dashboard load
 }
 function updateCourseLists(){const s=document.getElementById("removeCourseList");s.innerHTML="";currentUser.courses.forEach(c=>{const o=document.createElement("option");[o.value,o.textContent]=[c.id,c.name];s.appendChild(o);});}
 function addNewCourse(){const n=document.getElementById("newCourseName").value.trim(),c=getCourseObj(n);if(!c)return alert("Invalid course name!");if(currentUser.courses.some(x=>x.id===c.id))return alert("Course already added!");currentUser.courses.push(c);safeSaveUser();updateCourseLists();renderSubjects();document.getElementById("newCourseName").value="";}
@@ -230,6 +244,7 @@ function renderHistory(){
             <button onclick="viewCorrections(${currentUser.exams.indexOf(e)})">📖 View Corrections</button>
         </div>`;
     });
+    renderMath(); // ✅ Render math in history list
 }
 
 // --- ✅ COMPLETE CORRECTION DISPLAY ---
@@ -264,6 +279,7 @@ function viewCorrections(examIndex){
 
     reviewHTML += `<button onclick="location.reload()" style="margin-top:1rem;">🔙 Back to History</button></div>`;
     document.getElementById("examHistory").innerHTML = reviewHTML;
+    renderMath(); // ✅ Render math in review/explanations
 }
 
 function toggleMenu(){document.getElementById("sideMenu").classList.toggle("open");document.getElementById("menuOverlay").classList.toggle("show");}
@@ -274,4 +290,5 @@ window.addEventListener("DOMContentLoaded",()=>{
     const saved = JSON.parse(localStorage.getItem("cbtActive")||"null");
     if(saved) currentUser = JSON.parse(localStorage.getItem("cbtalluser")||"[]").find(u=>u.matric===saved.matric);
     if(currentUser) loadDashboard();
+    renderMath(); // ✅ Initial render on page load
 });
