@@ -1,0 +1,23 @@
+{
+  "name": "dec-academy-cbt-hub-portal",
+  "version": "1.0.0",
+  "description": "For practicing for federal university of technology Akure tests and examination",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"No tests specified\" && exit 0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/solomon-israel793/DEC-ACADEMY-CBT-HUB-PORTAL-.git"
+  },
+  "keywords": [
+    "education",
+    "cbt",
+    "examination"
+  ],
+  "author": "Solomon Israel",
+  "license": "ISC",
+  "dependencies": {
+    "@vercel/analytics": "^2.0.1"
+  }
+}
