@@ -40,7 +40,7 @@
 <div class="bg-overlay"></div>
 
 <!-- ☰ HAMBURGER MENU -->
-<div id="menuOverlay" class="menu-overlay"></div>
+<div id="menuOverlay" class="menu-overlay" onclick="toggleMenu()"></div>
 <div id="sideMenu" class="side-menu">
     <button class="close-menu" onclick="toggleMenu()">×</button>
     <div class="menu-profile">
@@ -81,15 +81,12 @@
         <h4>⚙️ Settings</h4>
         <label>Theme:</label>
         <select id="themeSwitch">
-            <option value="light">Light</option>
-            <option value="dark">Dark</option>
+            <option value="light">☀️ Light</option>
+            <option value="dark">🌙 Dark</option>
         </select>
         <label>Font Size:</label>
-        <select id="fontSize">
-            <option value="small">Small</option>
-            <option value="medium" selected>Medium</option>
-            <option value="large">Large</option>
-        </select>
+        <input type="range" id="fontSizeSlider" min="13" max="19" value="16">
+        <small id="fontSizeLabel">Medium</small>
     </div>
     <button class="logout-btn" onclick="confirmLogout()">🚪 Logout</button>
 
@@ -105,7 +102,6 @@
         <button class="tab-btn active" onclick="showTab('login')">Login</button>
         <button class="tab-btn" onclick="showTab('signup')">Sign Up</button>
         <button class="tab-btn" onclick="showTab('reset')">Reset Password</button>
-        
     </div>
 
     <!-- LOGIN -->
@@ -140,6 +136,14 @@
         <input type="text" id="department" placeholder="Department" required>
         <input type="text" id="school" placeholder="School / Faculty" required>
 
+        <!-- 🆕 GENDER SELECTION -->
+        <label>Gender:</label>
+        <select id="gender" required>
+            <option value="">-- Select --</option>
+            <option value="male">Male</option>
+            <option value="female">Female</option>
+        </select>
+
         <!-- SECURITY QUESTION -->
         <h4>Security Question (for password recovery)</h4>
         <select id="secQuestion" required>
@@ -151,9 +155,7 @@
         </select>
         <input type="text" id="secAnswer" placeholder="Your Answer" required>
 
-        <label>Profile Picture (Max 500KB):</label>
-        <input type="file" id="profilePic" accept="image/*" required onchange="checkImageSize(this)">
-        <small id="sizeNotice" style="color:var(--danger);display:none;"></small>
+        <p style="opacity:0.85; font-size:0.9rem;">📷 Standard profile picture will be used based on your gender selection.</p>
 
         <!-- 🆕 MULTIPLE COURSE SELECTION -->
         <h4>Select Courses to Offer:</h4>
@@ -223,7 +225,7 @@
             </div>
         </div>
     </header>
-
+<br><br>
     <main class="main-content">
         <h1 id="greeting" class="greeting"></h1>
 
