@@ -14,45 +14,36 @@ let selectedExamCourse = null;
 let selectedExamMode = null;
 let selectedTopics = [];
 
-// --- ✅ KATEX RENDER HELPER ---
-function renderMath() {
-    if (window.renderMathInElement) {
-        renderMathInElement(document.body, {
-            delimiters: [
-                {left: '\\(', right: '\\)', display: false},
-                {left: '\\[', right: '\\]', display: true}
-            ],
-            throwOnError: false
-        });
-    }
+// ✅ THEME SWITCH — FULLY WORKING
+function initTheme() {
+    const saved = localStorage.getItem("theme") || "light";
+    document.documentElement.classList.toggle("dark-theme", saved === "dark");
+    document.getElementById("themeSwitch").value = saved;
+}
+function toggleTheme(mode) {
+    document.documentElement.classList.toggle("dark-theme", mode === "dark");
+    localStorage.setItem("theme", mode);
+}
+
+// ✅ FONT SIZE RANGE SLIDER — FULLY WORKING
+function changeFontSize(size) {
+    document.documentElement.style.fontSize = size + "px";
+    const label = document.getElementById("fontSizeLabel");
+    if (size <= 14) label.textContent = "Small";
+    else if (size <= 17) label.textContent = "Medium";
+    else label.textContent = "Large";
+    localStorage.setItem("fontSize", size);
+}
+function initFontSize() {
+    const saved = localStorage.getItem("fontSize") || "16";
+    document.getElementById("fontSizeSlider").value = saved;
+    changeFontSize(saved);
 }
 
 // --- STORAGE & UTILITY FUNCTIONS ---
 function safeSave(key, valueObj) {
     try { localStorage.setItem(key, JSON.stringify(valueObj)); return true; }
     catch (err) { alert("⚠️ Storage FULL! Clear old history."); return false; }
-}
-function checkImageSize(input) {
-    const notice = document.getElementById("sizeNotice");
-    if(input.files[0] && input.files[0].size > 512000) {
-        notice.textContent = "❌ Image too large! Max 500KB.";
-        notice.style.display = "block";
-        input.value = "";
-    } else notice.style.display = "none";
-}
-function compressImage(file, maxWidth=120, quality=0.6, callback) {
-    const reader = new FileReader();
-    reader.onload = e => {
-        const img = new Image();
-        img.onload = () => {
-            const c = document.createElement("canvas");
-            [c.width, c.height] = [maxWidth, maxWidth];
-            c.getContext("2d").drawImage(img,0,0,maxWidth,maxWidth);
-            callback(c.toDataURL("image/jpeg", quality));
-        };
-        img.src = e.target.result;
-    };
-    reader.readAsDataURL(file);
 }
 
 // --- BACKGROUND SLIDESHOWS ---
@@ -80,36 +71,36 @@ function showTab(n){
 }
 function getCourseObj(name){return officialCourses.find(c=>c.name.toLowerCase()===name.trim().toLowerCase());}
 
-// --- 🆕 UPDATED REGISTER FUNCTION FOR MULTIPLE COURSES ---
+// --- 🆕 UPDATED REGISTER — GENDER-BASED STANDARD IMAGE ---
 function signupUser() {
     const matric = document.getElementById("matric").value.trim();
     const pass = document.getElementById("password").value;
+    const gender = document.getElementById("gender").value;
     const users = JSON.parse(localStorage.getItem("cbtalluser")||"[]");
     if(users.find(u=>u.matric===matric)) return alert("❌ Matric already registered!");
+    if(!gender) return alert("⚠️ Please select your gender!");
 
-    // Get ALL checked courses
-    const selectedCourses = Array.from(document.querySelectorAll('.course-checkbox:checked'))
-                                 .map(cb => cb.value);
+    const selectedCourses = Array.from(document.querySelectorAll('.course-checkbox:checked')).map(cb => cb.value);
     const selected = selectedCourses.map(n=>getCourseObj(n)).filter(Boolean);
     if(!selected.length) return alert("⚠️ Tick at least one course you are offering!");
 
-    const pic = document.getElementById("profilePic").files[0];
-    if(!pic || pic.size>512000) return alert("⚠️ Upload image under 500KB!");
+    // ✅ STANDARD IMAGE — use SVG so NO external files needed!
+    const profilePic = gender === "male" 
+        ? "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMDAgMjAwIj48c3R5bGU+cmVjdHtmaWxsOndoaXRlO30gY2lyY2xlZXtmaWxsOndoaXRlO308L3N0eWxlPjxjaXJjbGUgY3g9IjEwMCIgY3k9IjY1IiByPSI0NSIgZmlsbD0iIzFhMTExYSIvPjxyZWN0IHg9IjQ1IiB5PSIxMjAiIHdpZHRoPSIxMTAiIGhlaWdodD0iNzgiIHJ4PSIzNSIgZmlsbD0iIzFhMTExYSIvPjwvc3ZnPg=="
+        : "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMDAgMjAwIj48c3R5bGU+cmVjdHtmaWxsOndoaXRlO308L3N0eWxlPjxjaXJjbGUgY3g9IjEwMCIgY3k9IjY1IiByPSI0NSIgZmlsbD0iIzFhMTExYSIvPjxyZWN0IHg9IjQwIiB5PSIxMjAiIHdpZHRoPSIxMjAiIGhlaWdodD0iNzgiIHJ4PSI0MCAgZmlsbD0iIzFhMTExYSIvPjwvc3ZnPg==";
 
-    compressImage(pic,110,0.55, smallPic=>{
-        users.push({
-            surname: document.getElementById("surname").value.trim(),
-            firstname: document.getElementById("firstname").value.trim(),
-            matric, password: pass,
-            secQuestion: document.getElementById("secQuestion").value,
-            secAnswer: document.getElementById("secAnswer").value.trim().toLowerCase(),
-            department: document.getElementById("department").value.trim(),
-            school: document.getElementById("school").value.trim(),
-            profilePic: smallPic, courses: selected, exams: []
-        });
-        safeSave("cbtalluser", users);
-        alert("✅ Account created!"); showTab("login");
+    users.push({
+        surname: document.getElementById("surname").value.trim(),
+        firstname: document.getElementById("firstname").value.trim(),
+        matric, password: pass, gender,
+        secQuestion: document.getElementById("secQuestion").value,
+        secAnswer: document.getElementById("secAnswer").value.trim().toLowerCase(),
+        department: document.getElementById("department").value.trim(),
+        school: document.getElementById("school").value.trim(),
+        profilePic: profilePic, courses: selected, exams: []
     });
+    safeSave("cbtalluser", users);
+    alert("✅ Account created!"); showTab("login");
 }
 
 function loginUser() {
@@ -138,10 +129,13 @@ function checkSecurity(){
     };
 }
 
-// --- 🆕 NEW TOPIC FUNCTIONS ---
+// --- 🆕 FIXED EXAM MODE SYSTEM ---
 function closeModeSelect(){document.getElementById("modeSelectModal").classList.remove("show");}
+
+// ✅ RECEIVES MODE AND SAVES IT CORRECTLY
 function startExam(mode){
-    selectedExamMode = mode;
+    selectedExamMode = mode; // ✅ e.g. "instant", "medium", "review"
+    console.log("✅ Mode Selected:", selectedExamMode); // ✅ DEBUG
     closeModeSelect();
     showTopicSelection();
 }
@@ -149,52 +143,60 @@ function startExam(mode){
 function showTopicSelection(){
     const course = officialCourses.find(c=>c.id === selectedExamCourse.id);
     if(!course) return alert("Course not found!");
-    
     document.getElementById("topicCourseName").textContent = course.name;
     const container = document.getElementById("topicListContainer");
     container.innerHTML = "";
     selectedTopics = [];
-
-    // Add "All Topics" option
     const allOpt = document.createElement("label");
     allOpt.className = "option";
     allOpt.innerHTML = `<input type="checkbox" value="ALL" onchange="toggleAllTopics(this)"> <strong>📚 All Topics</strong>`;
     container.appendChild(allOpt);
-
-    // Add individual topics
     course.topics.forEach(topic=>{
         const opt = document.createElement("label");
         opt.className = "option";
         opt.innerHTML = `<input type="checkbox" value="${topic}" class="topic-check"> ${topic}`;
         container.appendChild(opt);
     });
-
     document.getElementById("topicSelectModal").classList.add("show");
 }
-
 function toggleAllTopics(cb){
     document.querySelectorAll(".topic-check").forEach(check=>check.checked = cb.checked);
 }
-
 function closeTopicSelect(){
     document.getElementById("topicSelectModal").classList.remove("show");
     document.getElementById("modeSelectModal").classList.add("show");
 }
 
+// ✅ CRITICAL FIX — SAVES MODE CORRECTLY + STANDARDIZED SETTINGS
 function confirmTopicSelection(){
     selectedTopics = Array.from(document.querySelectorAll(".topic-check:checked")).map(c=>c.value);
-    document.getElementById("topicSelectModal").classList.remove("show");
+    if(!selectedTopics.length) return alert("⚠️ Select at least one topic!");
 
-    const s={short:{q:20,t:900},medium:{q:30,t:1200},long:{q:50,t:2100},instant:{q:30,t:0}}[selectedExamMode];
-    localStorage.setItem("currentExam",JSON.stringify({
-        subId:selectedExamCourse.id,
-        subName:selectedExamCourse.name,
-        mode:selectedExamMode,
-        topics:selectedTopics,
-        qCount:s.q,
-        time:s.t
-    }));
-    window.location.href="exam.html";
+    // ✅ STANDARDIZED MODE SETTINGS — MATCHES exam.js EXPECTATIONS
+    const modeSettings = {
+        instant:  { q: 30, t: 0 },     // ✅ INSTANT MODE — NO TIMER
+        short:    { q: 20, t: 900 },   // 15 min
+        medium:   { q: 30, t: 1200 },  // 20 min
+        long:     { q: 50, t: 2100 },   // 35 min
+        review:   { q: 30, t: 0 }      // ✅ REVIEW MODE
+    };
+
+    const s = modeSettings[selectedExamMode] || modeSettings.medium; // ✅ SAFE FALLBACK
+
+    // ✅ SAVE WITH EXACT KEY NAMES exam.js EXPECTS
+    const examSettings = {
+        subId: selectedExamCourse.id,
+        subName: selectedExamCourse.name,
+        mode: selectedExamMode,  // 👈 CRITICAL — MUST BE NAMED "mode"
+        topics: selectedTopics,
+        qCount: s.q,
+        time: s.t
+    };
+
+    localStorage.setItem("currentExam", JSON.stringify(examSettings));
+    console.log("✅ Exam Started — Full Settings:", examSettings); // ✅ DEBUG
+    document.getElementById("topicSelectModal").classList.remove("show");
+    window.location.href = "exam.html";
 }
 
 // --- DASHBOARD LOAD ---
@@ -214,7 +216,6 @@ function loadDashboard(){
     document.getElementById("greeting").textContent=(h<12?"GOOD MORNING":h<17?"GOOD AFTERNOON":"GOOD EVENING")+", "+currentUser.firstname+" 🧠";
     
     updateCourseLists(); renderSubjects(); updateStats(); renderHistory(); drawChart();
-    renderMath(); // ✅ Render any math on dashboard load
 }
 function updateCourseLists(){const s=document.getElementById("removeCourseList");s.innerHTML="";currentUser.courses.forEach(c=>{const o=document.createElement("option");[o.value,o.textContent]=[c.id,c.name];s.appendChild(o);});}
 function addNewCourse(){const n=document.getElementById("newCourseName").value.trim(),c=getCourseObj(n);if(!c)return alert("Invalid course name!");if(currentUser.courses.some(x=>x.id===c.id))return alert("Course already added!");currentUser.courses.push(c);safeSaveUser();updateCourseLists();renderSubjects();document.getElementById("newCourseName").value="";}
@@ -230,65 +231,40 @@ function updateStats(){
 }
 function drawChart(){const c=document.getElementById("performanceChart");if(!c||!window.Chart)return;if(window.perfChart)window.perfChart.destroy();new Chart(c,{type:"line",data:{labels:currentUser.exams.map(e=>new Date(e.date).toLocaleDateString()),datasets:[{label:"Score %",data:currentUser.exams.map(e=>Math.round(e.score/30*100)),borderColor:"#2563eb",backgroundColor:"rgba(37,99,235,.1)",fill:true}]}});}
 
-// --- ✅ FULLY WORKING HISTORY + REVIEW / CORRECTION ---
 function renderHistory(){
     const h=document.getElementById("examHistory");h.innerHTML="";
     [...currentUser.exams].sort((a,b)=>new Date(b.date)-new Date(a.date)).slice(-15).forEach((e,i)=>{
         const p=Math.round(e.score/30*100);
-        h.innerHTML+=`
-        <div class="history-card">
-            <div>
-                <h4>${e.subject} — ${e.date}</h4>
-                <p>Score: ${e.score}/${e.questions.length} (${p}%) | Time Left: ${e.timeLeft} mins</p>
-            </div>
-            <button onclick="viewCorrections(${currentUser.exams.indexOf(e)})">📖 View Corrections</button>
-        </div>`;
+        h.innerHTML+=`<div class="history-card"><div><h4>${e.subject} — ${e.date}</h4><p>Score: ${e.score}/${e.questions.length} (${p}%) | Time Left: ${e.timeLeft} mins</p></div><button onclick="viewCorrections(${currentUser.exams.indexOf(e)})">📖 View Corrections</button></div>`;
     });
-    renderMath(); // ✅ Render math in history list
 }
-
-// --- ✅ COMPLETE CORRECTION DISPLAY ---
 function viewCorrections(examIndex){
     const exam = currentUser.exams[examIndex];
-    if(!exam || !exam.questions) return alert("❌ No review data available for this exam!");
-
-    let reviewHTML = `
-    <div style="background:var(--card);padding:1.5rem;border-radius:12px;margin-top:1rem;">
-        <h3 style="color:var(--primary);margin-bottom:1rem;">📚 ${exam.subject} — EXAM REVIEW</h3>
-        <p style="margin-bottom:1rem;"><strong>Score:</strong> ${exam.score}/${exam.questions.length} | <strong>Date:</strong> ${exam.date}</p>
-    `;
-
+    if(!exam || !exam.questions) return alert("❌ No review data available!");
+    let reviewHTML = `<div style="background:var(--card);padding:1.5rem;border-radius:12px;margin-top:1rem;"><h3 style="color:var(--primary);margin-bottom:1rem;">📚 ${exam.subject} — EXAM REVIEW</h3><p style="margin-bottom:1rem;"><strong>Score:</strong> ${exam.score}/${exam.questions.length} | <strong>Date:</strong> ${exam.date}</p>`;
     exam.questions.forEach((q, idx) => {
         const picked = exam.userAnswers[idx] || "Not Answered";
         const correct = q.answer;
         const isRight = picked === correct;
-
-        reviewHTML += `
-        <div style="padding:1rem;margin:0.8rem 0;border-radius:8px;border:1px solid var(--border);background:${isRight?"rgba(22,163,74,0.05)":"rgba(220,38,38,0.05)"};">
-            <p><strong>Q${idx+1}:</strong> ${q.question}</p>
-            <div style="margin:0.5rem 0;">
-                ${q.options.map(opt=>`
-                <div style="padding:0.4rem;margin:0.2rem 0;${opt[0]===correct?"background:rgba(22,163,74,0.1);border-left:3px solid var(--success);":""}${opt[0]===picked && !isRight?"background:rgba(220,38,38,0.1);border-left:3px solid var(--danger);":""}">
-                    ${opt} ${opt[0]===correct?"✅ CORRECT":""} ${opt[0]===picked && !isRight?"❌ YOUR ANSWER":""}
-                </div>`).join("")}
-            </div>
-            <p><strong>Your Answer:</strong> ${picked} | <strong>Correct Answer:</strong> ${correct}</p>
-            <p style="margin-top:0.5rem;"><strong>📌 Explanation:</strong> ${q.explanation}</p>
-        </div>`;
+        reviewHTML += `<div style="padding:1rem;margin:0.8rem 0;border-radius:8px;border:1px solid var(--border);background:${isRight?"rgba(22,163,74,0.05)":"rgba(220,38,38,0.05)"};"><p><strong>Q${idx+1}:</strong> ${q.question}</p><div style="margin:0.5rem 0;">${q.options.map(opt=>`<div style="padding:0.4rem;margin:0.2rem 0;${opt[0]===correct?"background:rgba(22,163,74,0.1);border-left:3px solid var(--success);":""}${opt[0]===picked && !isRight?"background:rgba(220,38,38,0.1);border-left:3px solid var(--danger);":""}">${opt} ${opt[0]===correct?"✅ CORRECT":""} ${opt[0]===picked && !isRight?"❌ YOUR ANSWER":""}</div>`).join("")}</div><p><strong>Your Answer:</strong> ${picked} | <strong>Correct Answer:</strong> ${correct}</p><p style="margin-top:0.5rem;"><strong>📌 Explanation:</strong> ${q.explanation}</p></div>`;
     });
-
     reviewHTML += `<button onclick="location.reload()" style="margin-top:1rem;">🔙 Back to History</button></div>`;
     document.getElementById("examHistory").innerHTML = reviewHTML;
-    renderMath(); // ✅ Render math in review/explanations
 }
 
 function toggleMenu(){document.getElementById("sideMenu").classList.toggle("open");document.getElementById("menuOverlay").classList.toggle("show");}
 function confirmLogout(){if(confirm("⚠️ Are you sure you want to logout?")){currentUser=null;localStorage.removeItem("cbtActive");location.reload();}}
 
+// ✅ ALL INITIALIZATIONS — THEME + FONT SIZE
 window.addEventListener("DOMContentLoaded",()=>{
+    initTheme();
+    initFontSize();
+    // ✅ ATTACH THEME & FONT SIZE LISTENERS
+    document.getElementById("themeSwitch").onchange = (e) => toggleTheme(e.target.value);
+    document.getElementById("fontSizeSlider").oninput = (e) => changeFontSize(e.target.value);
+    
     startAuthSlideshow();
     const saved = JSON.parse(localStorage.getItem("cbtActive")||"null");
     if(saved) currentUser = JSON.parse(localStorage.getItem("cbtalluser")||"[]").find(u=>u.matric===saved.matric);
     if(currentUser) loadDashboard();
-    renderMath(); // ✅ Initial render on page load
 });
