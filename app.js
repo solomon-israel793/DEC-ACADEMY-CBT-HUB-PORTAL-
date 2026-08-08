@@ -14,6 +14,39 @@ let selectedExamCourse = null;
 let selectedExamMode = null;
 let selectedTopics = [];
 
+// ==================================================
+// ✅ KATEX RENDER — DIRECT + AUTO-RENDER COMBINED
+// ==================================================
+function renderAllMathIn(container) {
+    if (!container) container = document.body;
+    // Method 1: Use auto-render if available
+    if (window.renderMathInElement) {
+        try {
+            renderMathInElement(container, {
+                delimiters: [
+                    {left: "\\(", right: "\\)", display: false},
+                    {left: "\\[", right: "\\]", display: true}
+                ],
+                throwOnError: false
+            });
+            console.log("✅ KaTeX rendered via auto-render");
+            return;
+        } catch (e) { console.log("Auto-render failed:", e); }
+    }
+    // Method 2: Direct KaTeX fallback — find and render manually
+    if (window.katex) {
+        const text = container.innerHTML;
+        const regex = /\\\((.*?)\\\)/g;
+        container.innerHTML = text.replace(regex, (match, formula) => {
+            try { return katex.renderToString(formula, {throwOnError: false}); }
+            catch { return match; }
+        });
+        console.log("✅ KaTeX rendered via direct method");
+    } else {
+        console.log("⚠️ KaTeX not loaded yet");
+    }
+}
+
 // ✅ THEME SWITCH — FULLY WORKING
 function initTheme() {
     const saved = localStorage.getItem("theme") || "light";
@@ -84,7 +117,6 @@ function signupUser() {
     const selected = selectedCourses.map(n=>getCourseObj(n)).filter(Boolean);
     if(!selected.length) return alert("⚠️ Tick at least one course you are offering!");
 
-    // ✅ STANDARD IMAGE — use SVG so NO external files needed!
     const profilePic = gender === "male" 
         ? "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMDAgMjAwIj48c3R5bGU+cmVjdHtmaWxsOndoaXRlO30gY2lyY2xlZXtmaWxsOndoaXRlO308L3N0eWxlPjxjaXJjbGUgY3g9IjEwMCIgY3k9IjY1IiByPSI0NSIgZmlsbD0iIzFhMTExYSIvPjxyZWN0IHg9IjQ1IiB5PSIxMjAiIHdpZHRoPSIxMTAiIGhlaWdodD0iNzgiIHJ4PSIzNSIgZmlsbD0iIzFhMTExYSIvPjwvc3ZnPg=="
         : "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMDAgMjAwIj48c3R5bGU+cmVjdHtmaWxsOndoaXRlO308L3N0eWxlPjxjaXJjbGUgY3g9IjEwMCIgY3k9IjY1IiByPSI0NSIgZmlsbD0iIzFhMTExYSIvPjxyZWN0IHg9IjQwIiB5PSIxMjAiIHdpZHRoPSIxMjAiIGhlaWdodD0iNzgiIHJ4PSI0MCAgZmlsbD0iIzFhMTExYSIvPjwvc3ZnPg==";
@@ -131,11 +163,8 @@ function checkSecurity(){
 
 // --- 🆕 FIXED EXAM MODE SYSTEM ---
 function closeModeSelect(){document.getElementById("modeSelectModal").classList.remove("show");}
-
-// ✅ RECEIVES MODE AND SAVES IT CORRECTLY
 function startExam(mode){
-    selectedExamMode = mode; // ✅ e.g. "instant", "medium", "review"
-    console.log("✅ Mode Selected:", selectedExamMode); // ✅ DEBUG
+    selectedExamMode = mode;
     closeModeSelect();
     showTopicSelection();
 }
@@ -167,34 +196,29 @@ function closeTopicSelect(){
     document.getElementById("modeSelectModal").classList.add("show");
 }
 
-// ✅ CRITICAL FIX — SAVES MODE CORRECTLY + STANDARDIZED SETTINGS
 function confirmTopicSelection(){
     selectedTopics = Array.from(document.querySelectorAll(".topic-check:checked")).map(c=>c.value);
     if(!selectedTopics.length) return alert("⚠️ Select at least one topic!");
 
-    // ✅ STANDARDIZED MODE SETTINGS — MATCHES exam.js EXPECTATIONS
     const modeSettings = {
-        instant:  { q: 30, t: 0 },     // ✅ INSTANT MODE — NO TIMER
-        short:    { q: 20, t: 900 },   // 15 min
-        medium:   { q: 30, t: 1200 },  // 20 min
-        long:     { q: 50, t: 2100 },   // 35 min
-        review:   { q: 30, t: 0 }      // ✅ REVIEW MODE
+        instant:  { q: 30, t: 0 },
+        short:    { q: 20, t: 900 },
+        medium:   { q: 30, t: 1200 },
+        long:     { q: 50, t: 2100 },
+        review:   { q: 30, t: 0 }
     };
 
-    const s = modeSettings[selectedExamMode] || modeSettings.medium; // ✅ SAFE FALLBACK
-
-    // ✅ SAVE WITH EXACT KEY NAMES exam.js EXPECTS
+    const s = modeSettings[selectedExamMode] || modeSettings.medium;
     const examSettings = {
         subId: selectedExamCourse.id,
         subName: selectedExamCourse.name,
-        mode: selectedExamMode,  // 👈 CRITICAL — MUST BE NAMED "mode"
+        mode: selectedExamMode,
         topics: selectedTopics,
         qCount: s.q,
         time: s.t
     };
 
     localStorage.setItem("currentExam", JSON.stringify(examSettings));
-    console.log("✅ Exam Started — Full Settings:", examSettings); // ✅ DEBUG
     document.getElementById("topicSelectModal").classList.remove("show");
     window.location.href = "exam.html";
 }
@@ -238,28 +262,59 @@ function renderHistory(){
         h.innerHTML+=`<div class="history-card"><div><h4>${e.subject} — ${e.date}</h4><p>Score: ${e.score}/${e.questions.length} (${p}%) | Time Left: ${e.timeLeft} mins</p></div><button onclick="viewCorrections(${currentUser.exams.indexOf(e)})">📖 View Corrections</button></div>`;
     });
 }
+
+// ==================================================
+// ✅ FINAL FIX — VIEW CORRECTIONS WITH KATEX
+// ==================================================
 function viewCorrections(examIndex){
     const exam = currentUser.exams[examIndex];
     if(!exam || !exam.questions) return alert("❌ No review data available!");
-    let reviewHTML = `<div style="background:var(--card);padding:1.5rem;border-radius:12px;margin-top:1rem;"><h3 style="color:var(--primary);margin-bottom:1rem;">📚 ${exam.subject} — EXAM REVIEW</h3><p style="margin-bottom:1rem;"><strong>Score:</strong> ${exam.score}/${exam.questions.length} | <strong>Date:</strong> ${exam.date}</p>`;
+
+    let reviewHTML = `
+        <div id="reviewContainer" style="background:var(--card);padding:1.5rem;border-radius:12px;margin-top:1rem;">
+            <h3 style="color:var(--primary);margin-bottom:1rem;">📚 ${exam.subject} — EXAM REVIEW</h3>
+            <p style="margin-bottom:1rem;"><strong>Score:</strong> ${exam.score}/${exam.questions.length} | <strong>Date:</strong> ${exam.date}</p>
+    `;
+
     exam.questions.forEach((q, idx) => {
         const picked = exam.userAnswers[idx] || "Not Answered";
         const correct = q.answer;
         const isRight = picked === correct;
-        reviewHTML += `<div style="padding:1rem;margin:0.8rem 0;border-radius:8px;border:1px solid var(--border);background:${isRight?"rgba(22,163,74,0.05)":"rgba(220,38,38,0.05)"};"><p><strong>Q${idx+1}:</strong> ${q.question}</p><div style="margin:0.5rem 0;">${q.options.map(opt=>`<div style="padding:0.4rem;margin:0.2rem 0;${opt[0]===correct?"background:rgba(22,163,74,0.1);border-left:3px solid var(--success);":""}${opt[0]===picked && !isRight?"background:rgba(220,38,38,0.1);border-left:3px solid var(--danger);":""}">${opt} ${opt[0]===correct?"✅ CORRECT":""} ${opt[0]===picked && !isRight?"❌ YOUR ANSWER":""}</div>`).join("")}</div><p><strong>Your Answer:</strong> ${picked} | <strong>Correct Answer:</strong> ${correct}</p><p style="margin-top:0.5rem;"><strong>📌 Explanation:</strong> ${q.explanation}</p></div>`;
+
+        reviewHTML += `
+            <div style="padding:1rem;margin:0.8rem 0;border-radius:8px;border:1px solid var(--border);background:${isRight?"rgba(22,163,74,0.05)":"rgba(220,38,38,0.05)"};">
+                <p><strong>Q${idx+1}:</strong> ${q.question}</p>
+                <div style="margin:0.5rem 0;">
+                    ${q.options.map(opt=>`
+                        <div style="padding:0.4rem;margin:0.2rem 0;${opt[0]===correct?"background:rgba(22,163,74,0.1);border-left:3px solid var(--success);":""}${opt[0]===picked && !isRight?"background:rgba(220,38,38,0.1);border-left:3px solid var(--danger);":""}">
+                            ${opt} ${opt[0]===correct?"✅ CORRECT":""} ${opt[0]===picked && !isRight?"❌ YOUR ANSWER":""}
+                        </div>
+                    `).join("")}
+                </div>
+                <p><strong>Your Answer:</strong> ${picked} | <strong>Correct Answer:</strong> ${correct}</p>
+                <p style="margin-top:0.5rem;"><strong>📌 Explanation:</strong> ${q.explanation}</p>
+            </div>
+        `;
     });
+
     reviewHTML += `<button onclick="location.reload()" style="margin-top:1rem;">🔙 Back to History</button></div>`;
+
+    // ✅ INSERT HTML FIRST
     document.getElementById("examHistory").innerHTML = reviewHTML;
+
+    // ✅ RENDER KATEX — MULTIPLE ATTEMPTS TO GUARANTEE SUCCESS
+    setTimeout(() => renderAllMathIn(document.getElementById("reviewContainer")), 30);
+    setTimeout(() => renderAllMathIn(document.getElementById("reviewContainer")), 150);
+    setTimeout(() => renderAllMathIn(document.getElementById("reviewContainer")), 400);
 }
 
 function toggleMenu(){document.getElementById("sideMenu").classList.toggle("open");document.getElementById("menuOverlay").classList.toggle("show");}
 function confirmLogout(){if(confirm("⚠️ Are you sure you want to logout?")){currentUser=null;localStorage.removeItem("cbtActive");location.reload();}}
 
-// ✅ ALL INITIALIZATIONS — THEME + FONT SIZE
+// ✅ ALL INITIALIZATIONS
 window.addEventListener("DOMContentLoaded",()=>{
     initTheme();
     initFontSize();
-    // ✅ ATTACH THEME & FONT SIZE LISTENERS
     document.getElementById("themeSwitch").onchange = (e) => toggleTheme(e.target.value);
     document.getElementById("fontSizeSlider").oninput = (e) => changeFontSize(e.target.value);
     
