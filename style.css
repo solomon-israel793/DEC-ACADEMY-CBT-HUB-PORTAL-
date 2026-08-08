@@ -121,3 +121,81 @@ button:hover {opacity:.92;transform:translateY(-1px);}
 .submit-btn {background:var(--success);font-size:1.1rem;padding:1rem;}
 .headdy {float:right;}
 .dec {color:#3B82F6;padding:.4rem;}
+/* ✅ ENHANCED CALCULATOR STYLES */
+.calc-display {
+    width: 100%;
+    padding: 1rem;
+    font-size: 1.4rem;
+    text-align: right;
+    border: 2px solid var(--border);
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Consolas', 'Monaco', monospace;
+}
+
+.calc-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 10px;
+}
+
+.calc-grid button {
+    padding: 12px 8px;
+    border-radius: 8px;
+    border: none;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    background: linear-gradient(145deg, #e6eefc, #d1e0f5);
+    color: #1e40af;
+    box-shadow: 2px 2px 5px rgba(0,0,0,0.1);
+}
+
+.calc-grid button:hover {
+    transform: translateY(-2px);
+    box-shadow: 3px 3px 8px rgba(0,0,0,0.15);
+    background: linear-gradient(145deg, #d1e0f5, #bfd3f2);
+}
+
+.calc-grid button:active {
+    transform: translateY(0);
+    box-shadow: inset 2px 2px 5px rgba(0,0,0,0.1);
+}
+
+.calc-grid button:nth-child(5n) {
+    background: linear-gradient(145deg, #fef2f2, #fecaca);
+    color: #b91c1c;
+}
+
+.calc-grid button:nth-child(5n):hover {
+    background: linear-gradient(145deg, #fecaca, #fca5a5);
+}
+
+.calc-grid button:nth-child(25) {
+    background: linear-gradient(145deg, #dcfce7, #bbf7d0);
+    color: #166534;
+    font-weight: bold;
+    font-size: 1.2rem;
+}
+
+.calc-grid button:nth-child(25):hover {
+    background: linear-gradient(145deg, #bbf7d0, #86efac);
+}
+
+.dark-theme .calc-grid button {
+    background: linear-gradient(145deg, #1e293b, #334155);
+    color: #93c5fd;
+}
+
+.dark-theme .calc-grid button:nth-child(5n) {
+    background: linear-gradient(145deg, #450a0a, #7f1d1d);
+    color: #fca5a5;
+}
+
+.dark-theme .calc-grid button:nth-child(25) {
+    background: linear-gradient(145deg, #052e16, #14532d);
+    color: #86efac;
+}
