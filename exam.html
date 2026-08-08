@@ -6,10 +6,18 @@
     <title>Dec Academic CBT Hub</title>
     <link rel="stylesheet" href="style.css">
     <link rel="icon" href="logo1.png">
-    <!-- ✅ KATEX FOR MATH FORMULAS -->
+    <!-- ✅ KATEX FOR MATH FORMULAS + AUTO-RENDER CONFIG -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
     <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
-    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"
+        onload="renderMathInElement(document.body, {
+            delimiters: [
+                {left: '\\(', right: '\\)', display: false},
+                {left: '\\[', right: '\\]', display: true}
+            ],
+            throwOnError: false
+        });">
+    </script>
 </head>
 <body>
 
@@ -27,7 +35,7 @@
         </div>
     </div>
     <div class="timer-box" id="timer">00:00</div>
-    <button class="calc-toggle" onclick="toggleCalc()">🧮 Calculator</button>
+    <button class="calc-toggle" id="calcToggleBtn" onclick="toggleCalc()">🧮 Calculator</button>
 </header>
 
 <main class="exam-container">
@@ -48,40 +56,59 @@
     <button class="submit-btn" onclick="confirmSubmit()">✅ Submit Exam</button>
 </main>
 
-<!-- 🧮 ON-SCREEN CALCULATOR -->
+<!-- 🧮 ENHANCED SCIENTIFIC CALCULATOR -->
 <div id="calcPanel" class="calc-panel">
-    <h3 style="text-align:center;margin-bottom:1rem;">Calculator</h3>
-    <input type="text" id="calcDisplay" readonly placeholder="0">
+    <h3 style="text-align:center;margin-bottom:1rem;">🧮 Scientific Calculator (Degrees)</h3>
+    <input type="text" id="calcDisplay" readonly placeholder="0" class="calc-display">
     <div class="calc-grid">
+        <!-- Row 1 -->
+        <button onclick="calcInput('(')">(</button>
+        <button onclick="calcInput(')')">)</button>
+        <button onclick="calcInput('^')">xⁿ</button>
+        <button onclick="calcInput('/')">÷</button>
+        <button onclick="calcClear()">C</button>
+        
+        <!-- Row 2 -->
         <button onclick="calcInput('7')">7</button>
         <button onclick="calcInput('8')">8</button>
         <button onclick="calcInput('9')">9</button>
-        <button onclick="calcInput('/')">/</button>
-        <button onclick="calcClear()">C</button>
-
+        <button onclick="calcInput('*')">×</button>
+        <button onclick="calcBack()">⌫</button>
+        
+        <!-- Row 3 -->
         <button onclick="calcInput('4')">4</button>
         <button onclick="calcInput('5')">5</button>
         <button onclick="calcInput('6')">6</button>
-        <button onclick="calcInput('*')">×</button>
-        <button onclick="calcBack()">⌫</button>
-
+        <button onclick="calcInput('-')">−</button>
+        <button onclick="calcInput('sqrt(')">√</button>
+        
+        <!-- Row 4 -->
         <button onclick="calcInput('1')">1</button>
         <button onclick="calcInput('2')">2</button>
         <button onclick="calcInput('3')">3</button>
-        <button onclick="calcInput('-')">−</button>
-        <button onclick="calcInput('(')">(</button>
-
+        <button onclick="calcInput('+')">+</button>
+        <button onclick="calcInput('cbrt(')">∛</button>
+        
+        <!-- Row 5 -->
         <button onclick="calcInput('0')">0</button>
         <button onclick="calcInput('.')">.</button>
         <button onclick="calcInput('pi')">π</button>
-        <button onclick="calcInput('+')">+</button>
-        <button onclick="calcInput(')')">)</button>
-
-        <button onclick="calcInput('sqrt(')">√</button>
+        <button onclick="calcInput('e')">e</button>
+        <button onclick="calcEquals()">=</button>
+        
+        <!-- Row 6 — Scientific Functions -->
         <button onclick="calcInput('sin(')">sin</button>
         <button onclick="calcInput('cos(')">cos</button>
         <button onclick="calcInput('tan(')">tan</button>
-        <button onclick="calcEquals()">=</button>
+        <button onclick="calcInput('exp(')">eˣ</button>
+        <button onclick="calcInput('ln(')">ln</button>
+        
+        <!-- Row 7 — More Functions -->
+        <button onclick="calcInput('log(')">log₁₀</button>
+        <button onclick="calcInput('asin(')">sin⁻¹</button>
+        <button onclick="calcInput('acos(')">cos⁻¹</button>
+        <button onclick="calcInput('atan(')">tan⁻¹</button>
+        <button onclick="calcInput('log2(')">log₂</button>
     </div>
 </div>
 
