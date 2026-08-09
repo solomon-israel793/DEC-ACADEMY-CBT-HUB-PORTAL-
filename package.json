@@ -1,0 +1,15 @@
+{
+  "name": "dec-academy-cbt-hub-portal",
+  "version": "1.0.0",
+  "description": "DEC Academic CBT Portal",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"No tests specified\" && exit 0"
+  },
+  "keywords": ["cbt", "education", "exam"],
+  "author": "Solomon Israel",
+  "license": "MIT",
+  "dependencies": {
+    "@vercel/speed-insights": "^1.0.0"
+  }
+}
