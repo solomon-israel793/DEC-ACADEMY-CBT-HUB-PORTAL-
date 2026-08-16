@@ -7,7 +7,7 @@ const officialCourses = [
     {name: "GST-112", id: "culture", topics: ["Futa past questions","History and its Sources", "Timelines or Periods in History", "Nigerian History and its Sources", "Culture and Primitive Technology", "Culture and its Components", "The Role of Culture in Development", "Culture Language and Socialisation", "Language Culture and Socialisation", "Slavery, Colonialism and the Spread of Christianity and Islam in Nigeria", "Socio-Political and Cultural Developments in Nigeria", "Evolution of Nigeria as a Political Unit", "Nigeria's Colonial Experience: The Early Years", "Norms and Values in the Nigerian Society", "Social Vices", "Nigerian Citizenship and Obligations"]},
     {name: "MEE-102", id: "workshop", topics: ["Fitting", "Automobile", "Refrigeration and Air conditioning", "Machining","Welding"]},
     {name: "CHE-104", id: "practical", topics: ["Futa past questions"]},
-    {name: "FCPE-102", id: "engineer", topics: ["Futa past questions","Historical development of modern computing and it's role in engineering", "Computing in engineering", "From idea to market", "Introduction to Engineering and Smart Systems"]}
+    {name: "FCPE-102", id: "engineer", topics: ["Futa past questions","Historical Development of Modern Computing & Its Role in Engineering", "Computing in Engineering","Computing Career Pathways in Engineering","From Idea to Market", "Introduction to Engineering and Smart Systems"]}
 ];
 let currentUser = null;
 let selectedExamCourse = null;
