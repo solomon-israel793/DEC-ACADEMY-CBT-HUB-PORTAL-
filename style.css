@@ -993,8 +993,8 @@ input:focus, select:focus, textarea:focus {
     color: white;
     text-align: center;
     padding: 1.2rem;
-    font-size: 1.4rem;
-    font-weight: 800;
+    font-size: 1.0rem;
+    font-weight: 600;
     position: fixed;
     top: 0;
     width: 100%;
@@ -1077,7 +1077,7 @@ input:focus, select:focus, textarea:focus {
     to { opacity: 1; transform: translateY(0); }
 }
 .question-card h3 {
-    font-size: 1.35rem;
+    font-size: 1.0rem;
     line-height: 1.8;
     margin-bottom: 2rem;
     color: var(--text);
@@ -1086,13 +1086,13 @@ input:focus, select:focus, textarea:focus {
 .question-card .option {
     margin: 0.9rem 0;
     padding: 1.2rem 1.45rem;
-    font-size: 1.05rem;
+    font-size: 0.8rem;
     border-radius: var(--radius-md); /* ✅ ROUNDED EDGES ON OPTIONS IN EXAM */
 }
 .option.selected {
     background: var(--gradient-mesh);
     border-color: transparent;
-    font-weight: 600;
+    font-weight: 400;
     border-left: 5px solid;
     border-image: var(--gradient-hero) 1;
     border-radius: var(--radius-md); /* ✅ ROUNDED EDGES ON SELECTED OPTION */
@@ -1117,7 +1117,7 @@ input:focus, select:focus, textarea:focus {
     border-radius: 50%;
     background: var(--surface);
     border: 2px solid var(--border-light);
-    font-weight: 700;
+    font-weight: 600;
     color: var(--text-muted);
     transition: all 0.3s ease;
     box-shadow: var(--shadow-sm);
