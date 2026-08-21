@@ -1008,6 +1008,8 @@ input:focus, select:focus, textarea:focus {
     width: 100%;
     background: rgba(255,255,255,0.9);
     backdrop-filter: blur(12px);
+    font-size: 0.8rem;
+    font-weight: 500;
     color: var(--text);
     display: flex;
     justify-content: space-between; /* ✅ Ensures timer shows on right */
