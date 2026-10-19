@@ -1,0 +1,26 @@
+{
+  "name": "DEC Academic CBT Portal",
+  "short_name": "DEC CBT Hub",
+  "description": "Comprehensive Computer-Based Testing platform — practice exams, performance tracking, IQ assessment, and more.",
+  "start_url": "/index.html",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#1a1a2e",
+  "theme_color": "#00d4ff",
+  "categories": ["education", "productivity"],
+  "scope": "/",
+  "icons": [
+    {
+      "src": "icons/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icons/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
